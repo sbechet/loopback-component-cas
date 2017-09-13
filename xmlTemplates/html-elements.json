@@ -1,0 +1,17 @@
+{
+  "<Response>": {},
+  "<Status>": {},
+  "<StatusCode>": {},
+  "<Assertion>": {},
+  "<Conditions>": {},
+  "<AudienceRestrictionCondition>": {},
+  "<Audience>": {},
+  "<AttributeStatement>": {},
+  "<Subject>": {},
+  "<NameIdentifier>": {},
+  "<SubjectConfirmation>": {},
+  "<ConfirmationMethod>": {},
+  "<Attribute>": {},
+  "<AttributeValue>": {},
+  "<AuthenticationStatement>": {}
+}

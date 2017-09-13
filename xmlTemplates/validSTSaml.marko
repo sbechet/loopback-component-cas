@@ -1,0 +1,73 @@
+<SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/">
+  <SOAP-ENV:Header />
+  <SOAP-ENV:Body>
+    <Response xmlns="urn:oasis:names:tc:SAML:1.0:protocol" xmlns:saml="urn:oasis:names:tc:SAML:1.0:assertion"
+    xmlns:samlp="urn:oasis:names:tc:SAML:1.0:protocol" xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" IssueInstant="${profile.issueinstant}"
+    MajorVersion="1" MinorVersion="1" Recipient="https://eiger.iad.vt.edu/dat/home.do"
+    ResponseID="${profile.responseid}">
+      <Status>
+        <StatusCode Value="samlp:Success">
+        </StatusCode>
+      </Status>
+      <Assertion xmlns="urn:oasis:names:tc:SAML:1.0:assertion" AssertionID="${profile.responseid}"
+      IssueInstant="${profile.issueinstant}" Issuer="loopback-component-cas" MajorVersion="1"
+      MinorVersion="1">
+        <Conditions NotBefore="${profile.issueinstant}" NotOnOrAfter="${profile.issueinstant}">
+          <AudienceRestrictionCondition>
+            <Audience>
+              ${profile.audience}
+            </Audience>
+          </AudienceRestrictionCondition>
+        </Conditions>
+
+        <AttributeStatement>
+          <Subject>
+            <NameIdentifier>${profile.uuid}</NameIdentifier>
+            <SubjectConfirmation>
+              <ConfirmationMethod>
+                urn:oasis:names:tc:SAML:1.0:cm:artifact
+              </ConfirmationMethod>
+            </SubjectConfirmation>
+          </Subject>
+
+          <if(profile.attributes.extraAttributes)>
+            <for(name,value in profile.attributes.standardAttributes)>
+              <if(name === 'memberOf')>
+                <for (group in value)>
+                  <Attribute AttributeName="groupMembership" AttributeNamespace="http://www.ja-sig.org/products/cas/">
+                    <AttributeValue>${group}</AttributeValue>
+                  </Attribute>
+                </for>
+              </if>
+              <else>
+                <Attribute AttributeName="${name}" AttributeNamespace="http://www.ja-sig.org/products/cas/">
+                  <AttributeValue>${value}</AttributeValue>
+                </Attribute>
+              </else>
+            </for>
+          </if>
+
+          <for(name,value in profile.attributes.extraAttributes)>
+            <Attribute AttributeName="${name}" AttributeNamespace="http://www.ja-sig.org/products/cas/">
+              <AttributeValue>${value}</AttributeValue>
+            </Attribute>
+          </for>
+
+        </AttributeStatement>
+
+        <AuthenticationStatement AuthenticationInstant="${profile.issueinstant}"
+        AuthenticationMethod="urn:oasis:names:tc:SAML:1.0:am:password">
+          <Subject>
+            <NameIdentifier>${profile.uuid}</NameIdentifier>
+            <SubjectConfirmation>
+              <ConfirmationMethod>
+                urn:oasis:names:tc:SAML:1.0:cm:artifact
+              </ConfirmationMethod>
+            </SubjectConfirmation>
+          </Subject>
+        </AuthenticationStatement>
+      </Assertion>
+    </Response>
+  </SOAP-ENV:Body>
+</SOAP-ENV:Envelope>

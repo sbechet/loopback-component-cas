@@ -1,0 +1,26 @@
+{
+  "name": "loopback-component-cas",
+  "version": "0.1.0",
+  "description": "Loopback CAS Authentification",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "jasig",
+    "cas",
+    "saml",
+    "authentication",
+    "sso",
+    "loopback",
+    "component"
+  ],
+  "author": "Sebastien Bechet <sebastien.bechet@osinix.com>",
+  "license": "MIT",
+  "dependencies": {
+    "bluebird": "^3.5.0",
+    "debug": "^3.0.1",
+    "marko": "^4.4.28",
+    "moment": "^2.18.1"
+  }
+}
