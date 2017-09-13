@@ -16,6 +16,11 @@
     "component"
   ],
   "author": "Sebastien Bechet <sebastien.bechet@osinix.com>",
+  "bugs": "https://github.com/sbechet/loopback-component-cas/issues",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/sbechet/loopback-component-cas.git"
+  },
   "license": "MIT",
   "dependencies": {
     "bluebird": "^3.5.0",
