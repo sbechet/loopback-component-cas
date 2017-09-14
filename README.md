@@ -14,7 +14,7 @@ Note : some `xmlTemplates/` files coming from [https://github.com/jscas/cas-serv
 
 ## How to generate your own SSL certificate
 
-```
+```shell
   $ cd server/server/private
   $ openssl genrsa -out privatekey.pem 1024
   $ openssl req -new -key privatekey.pem -out certrequest.csr
@@ -32,9 +32,9 @@ Note : some `xmlTemplates/` files coming from [https://github.com/jscas/cas-serv
 
 User model MUST have a `profile` entry with user JSON profile AND `uuid` for each user.
 
-Example:
+Example in `common/models/account.json`:
 
-```
+```json
 {
   "name": "Account",
   "base": "User",
@@ -58,23 +58,45 @@ Example:
 }
 ```
 
+### AccessToken model
+
+In `model-config.json`, add appId field and modify belongsTo relation to use Account.
+
+```json
+"AccessToken": {
+  ...
+  "relations": {
+    "application": {
+      "type": "belongsTo",
+      "model": "Application",
+      "foreignKey": "appId"
+    },
+    "user": {
+      "type": "belongsTo",
+      "model": "Account",
+      "foreignKey": "userId"
+    }
+  }
+}
+```
+
 ### login and logout WEB Pages
 
 CAS redirect on theses pages if necessary.
 
 #### login Page parameter
 
-* redirect [OPTIONAL] - the full URL-encoded cas login service as described in section 2.2 of RFC 3986 (ex. ${CASServerUrl}/cas/login?service=serviceUrl)
+* `redirect` [OPTIONAL] - the full URL-encoded cas login service as described in section 2.2 of RFC 3986 (ex. ${CASServerUrl}/cas/login?service=serviceUrl)
 
 #### logout Page parameter
 
-* redirect [OPTIONAL] - the full URL-encoded service URL as described in section 2.2 of RFC 3986
+* `redirect` [OPTIONAL] - the full URL-encoded service URL as described in section 2.2 of RFC 3986
 
 ### `token` and `express-xml-bodyparser`
 
 In `server/middleware.json`, add token in request and express-xml-bodyparser
 
-```
+```json
 "auth": {
   "loopback#token": {}
 },
@@ -86,14 +108,14 @@ In `server/middleware.json`, add token in request and express-xml-bodyparser
      "explicitArray": false
     }
   }
-},
+}
 ```
 
 ## Component configuration
 
 In `server/component-config.json`
 
-```
+```json
 "./components/loopback-component-cas": {
   "serviceTicketTTL": 60000,
   "loginPage": "/account/signin",
@@ -101,7 +123,7 @@ In `server/component-config.json`
   "userModel": "User",
   "attributes": {
     "standardAttributes": [ "authenticationDate", "longTermAuthenticationRequestTokenUsed", "isFromNewLogin", "memberOf" ],
-    "extraAttributes": ["Fullname", "email", ...]
+    "extraAttributes": ["Fullname", "email"]
   }
 ```
 
