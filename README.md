@@ -8,18 +8,10 @@ Use it with [loopback](https://github.com/strongloop/loopback)
 * [SAML v1.1](https://en.wikipedia.org/wiki/SAML_1.1)
 
 DONE : CASv1, CASv2, CASv3, SAMLv1.1
+
 TODO : SLO logout, SAMLv2
 
 Note : some `xmlTemplates/` files coming from [https://github.com/jscas/cas-server](jscas).
-
-## How to generate your own SSL certificate
-
-```shell
-  $ cd server/server/private
-  $ openssl genrsa -out privatekey.pem 1024
-  $ openssl req -new -key privatekey.pem -out certrequest.csr
-  $ openssl x509 -req -in certrequest.csr -signkey privatekey.pem -out certificate.pem
-```
 
 ## Installation
 
@@ -125,7 +117,17 @@ In `server/component-config.json`
     "standardAttributes": [ "authenticationDate", "longTermAuthenticationRequestTokenUsed", "isFromNewLogin", "memberOf" ],
     "extraAttributes": ["Fullname", "email"]
   }
+}
 ```
 
 * extraAttributes can be any key from `${userModel}.profile`.
 * `${userModel}.uuid` is always injected
+
+## How to generate your own SSL certificate
+
+```shell
+  $ cd server/server/private
+  $ openssl genrsa -out privatekey.pem 1024
+  $ openssl req -new -key privatekey.pem -out certrequest.csr
+  $ openssl x509 -req -in certrequest.csr -signkey privatekey.pem -out certificate.pem
+```
