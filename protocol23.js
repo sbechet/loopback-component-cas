@@ -84,6 +84,18 @@ module.exports = function (app, config, req, res, next, isProtocol3) {
           }
         }
 
+        /*
+          Normalized profile information conforms to the
+          [contact schema](https://tools.ietf.org/html/draft-smarr-vcarddav-portable-contacts-00)
+          established by [Joseph Smarr][schema-author].
+
+          Nevertheless, we use it for specific useful key.
+        */
+        returnProfile.attributes.extraAttributes.firstname = profile.name.givenName
+        returnProfile.attributes.extraAttributes.lastname = profile.name.familyName
+        returnProfile.attributes.extraAttributes.userId = returnProfile.uuid
+        returnProfile.attributes.extraAttributes.uuid = returnProfile.uuid
+
       } catch (e) {
         debug("ERROR: %s", e)
       }
