@@ -123,11 +123,6 @@ In `server/component-config.json`
 * extraAttributes can be any key from `${userModel}.profile`.
 * `${userModel}.uuid` is always injected
 
-## How to generate your own SSL certificate
+## Database configuration
 
-```shell
-  $ cd server/server/private
-  $ openssl genrsa -out privatekey.pem 1024
-  $ openssl req -new -key privatekey.pem -out certrequest.csr
-  $ openssl x509 -req -in certrequest.csr -signkey privatekey.pem -out certificate.pem
-```
+You MUST use `application` model to store `url.origin` in url field.

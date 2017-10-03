@@ -1,10 +1,10 @@
 'use strict'
 
-const re_weburl = require('./regex-weburl.js')
-
 /* logout */
 module.exports = function (app, config, req, res, next) {
   let serviceUrl = req.query['service']
+  let URLserviceUrl = new URL(serviceUrl)
+  let URLorigin = URLserviceUrl.origin
 
   if (req.accesstoken) {
     eval('app.models.' + config.userModel).logout(req.accessToken.id,function(err) {
@@ -19,16 +19,8 @@ module.exports = function (app, config, req, res, next) {
     return res.redirect(config.logoutPage)
   }
 
-  // if != production "http://localhost" allowed
-  if (process.env.NODE_ENV === 'production') {
-    // SQL injection prevention
-    if (!re_weburl.test(serviceUrl)) {
-      return res.redirect(config.logoutPage)
-    }
-  }
-
   // validate service
-  app.models.Application.findOne({ where: { url: serviceUrl } },function(err, service) {
+  app.models.Application.findOne({ where: { url: URLorigin } },function(err, service) {
     if (err) {
       let error = new Error(err)
       error.status = 500

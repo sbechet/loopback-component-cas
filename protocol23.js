@@ -98,6 +98,8 @@ module.exports = function (app, config, req, res, next, isProtocol3) {
   let responseID = '_' + crypto.randomBytes(16).toString('hex')
 
   let serviceUrl = req.query['service']
+  let URLserviceUrl = new URL(serviceUrl)
+  let URLorigin = URLserviceUrl.origin
   let ticket = req.query['ticket']
 
 
@@ -147,21 +149,8 @@ module.exports = function (app, config, req, res, next, isProtocol3) {
         }))
       }
 
-      // if != production "http://localhost" allowed
-      if (process.env.NODE_ENV === 'production') {
-        // SQL injection prevention
-        if (!re_weburl.test(serviceUrl)) {
-          return res.send(xmlinvalid.renderToString({
-            code: errorCodes.INVALID_SERVICE,
-            message: `service ${serviceUrl} was not recognized`,
-            responseid: responseID,
-            issueinstant: moment().toISOString(),
-            audience: service.url
-          }))
-        }
-      }
       // validate service
-      app.models.Application.findOne({ where: { url: serviceUrl } },function(err, service) {
+      app.models.Application.findOne({ where: { url: URLorigin } },function(err, service) {
         if (err || !service) {
           debug('service '+ serviceUrl + ' not recognized')
           return res.send(xmlinvalid.renderToString({

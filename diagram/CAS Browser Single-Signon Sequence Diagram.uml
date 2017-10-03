@@ -1,0 +1,294 @@
+@startuml
+
+
+
+'skin BlueModern
+
+
+
+title: CAS Browser Single-Signon Sequence Diagram
+
+
+
+actor user as U
+
+participant "Browser" as B
+
+participant "CAS Server" as C
+
+participant "Protected App" as P
+
+participant "Protected App #2" as P2
+
+
+
+
+
+== First Access ==
+
+
+
+U -> B :Goto "app"
+
+Activate B
+
+B -> P : GET https://app.example.com/
+
+activate P
+
+B <-- P : 302 Location: https://cas.example.com/cas/login?\nservice=<i>https%3A%2F%2Fapp.example.com%2F</i>
+
+note right
+
+                Access is unauthenticated so
+
+                forward to CAS for authentication.
+
+                "service" query parameter
+
+                https://app.example.com/
+
+                is URL encoded
+
+end note
+
+deactivate P
+
+
+
+B -> C: GET https://cas.example.com/cas/login?\nservice=<i>https%3A%2F%2Fapp.example.com%2F</i>
+
+activate B
+
+activate C
+
+
+
+B <-- C: CAS Login Form
+
+note right
+
+                User does not have an SSO Session so
+
+                present login form
+
+end note
+
+deactivate C
+
+U <- B: Display CAS\nLogin Form
+
+activate U
+
+U --> B: Submit CAS\nLogin Form
+
+deactivate U
+
+B -> C: POST https://cas.example.com/cas/login?\nservice=<i>https%3A%2F%2Fapp.example.com%2F</i>
+
+note right
+
+                username, password, and login ticket
+
+                are POSTed in the body
+
+end note
+
+activate C
+
+C -> C: Authenticate user
+
+B <-- C: Set-Cookie: CASTGC=TGT-2345678\n302 Location: https://app.example.com/?\nticket=ST-12345678
+
+note right
+
+                User is authenticated so create Single-signon (SSO) session
+
+                CASTGC cookie contains the Ticket Granting Ticket (TGT)
+
+                The TGT is the session key for the users SSO session
+
+end note
+
+deactivate C
+
+deactivate B
+
+
+
+B -> P: GET https://app.example.com/?ticket=ST-12345678
+
+activate P
+
+P -> C: GET https://cas.example.com/serviceValidate?\nservice=<i>https%3A%2F%2Fapp.example.com%2F&\nticket=ST-12345678</i>
+
+note right
+
+                Protected app validates Service
+
+                Ticket (ST) at CAS server over https
+
+end note
+
+activate C
+
+P <-- C: 200 [XML Content]
+
+note left
+
+                CAS returns an XML document which includes
+
+                an indication of success, the authenticated
+
+                subject, and optionally attributes
+
+end note
+
+deactivate C
+
+B <-- P: Set-Cookie: JSESSIONID=ABC1234567\n302 Location: https://app.example.com/
+
+note right
+
+                Set the session cookie and forward
+
+                the browser back to the application with
+
+                the service ticket stripped off
+
+                This optional step prevents the browser
+
+                address bar from displaying the ST
+
+end note
+
+deactivate P
+
+B -> P: Cookie: JSESSIONID=ABC1234567 GET https://app.example.com/
+
+activate P
+
+P -> P: Validate session cookie
+
+B <-- P: 200 [Content of https://app.example.com/]
+
+deactivate P
+
+U <-- B: Display "app"
+
+deactivate B
+
+
+
+...
+
+
+
+== Second Access To Same Application ==
+
+
+
+U-> B: Request resource
+
+activate B
+
+B -> P : Cookie: JSESSIONID=ABC1234567\nGET https://app.example.com/resource
+
+note right
+
+                Session Cookie is sent
+
+                along with the request
+
+end note
+
+activate P
+
+P -> P: Validate session cookie
+
+B <-- P : "200 [Resource Content]"
+
+deactivate P
+
+U <-- B : Display resource
+
+deactivate B
+
+
+
+...
+
+
+
+== First Access To Second Application ==
+
+
+
+U -> B :Goto "app2"
+
+Activate B
+
+B -> P2 : GET https://app2.example.com/
+
+activate P2
+
+B <-- P2 : 302 Location: https://cas.example.com/cas/login?\nservice=<i>https%3A%2F%2Fapp2.example.com%2F</i>
+
+deactivate P2
+
+
+
+B -> C: Cookie: CASTGC=TGT-2345678\nGET https://cas.example.com/cas/login?\nservice=<i>https%3A%2F%2Fapp2.example.com%2F</i>
+
+activate B
+
+activate C
+
+C -> C: Validate TGT
+
+B <-- C: Location: https://app2.example.com/?\nticket=ST-345678
+
+note right
+
+                CAS validates the TGT so no login is required
+
+end note
+
+deactivate C
+
+deactivate B
+
+
+
+B -> P2: GET https://app2.example.com/?ticket=ST-12345678
+
+activate P2
+
+P2 -> C: GET https://cas.example.com/serviceValidate?\nservice=<i>https%3A%2F%2Fapp2.example.com%2F&\nticket=ST-12345678</i>
+
+activate C
+
+P2 <-- C: 200 [XML Content]
+
+deactivate C
+
+B <-- P2: Set-Cookie: MOD_AUTH_CAS_S=XYZ1234567\n302 Location: https://app2.example.com/
+
+deactivate P2
+
+B -> P2: Cookie: MOD_AUTH_CAS_S=XYZ1234567 GET https://app2.example.com/
+
+activate P2
+
+P2->P2: Validate session cookie
+
+B <-- P2: 200 [Content of https://app2.example.com/]
+
+deactivate P2
+
+U <-- B: Display "app2"
+
+deactivate B
+
+
+@enduml

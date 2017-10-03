@@ -5,6 +5,8 @@ const debug = require('debug')('loopback:component:cas')
 /* p1Validate */
 module.exports = function (app, config, req, res, next) {
   let serviceUrl = req.query['service']
+  let URLserviceUrl = new URL(serviceUrl)
+  let URLorigin = URLserviceUrl.origin
   let ticket = req.query['ticket']
 
   if (!ticket || !serviceUrl) {
@@ -24,15 +26,8 @@ module.exports = function (app, config, req, res, next) {
         return res.send('no\n')
       }
 
-      // if != production "http://localhost" allowed
-      if (process.env.NODE_ENV === 'production') {
-        // SQL injection prevention
-        if (!re_weburl.test(serviceUrl)) {
-          return res.send('no\n')
-        }
-      }
       // validate service
-      app.models.Application.findOne({ where: { url: serviceUrl } },function(err, service) {
+      app.models.Application.findOne({ where: { url: URLorigin } },function(err, service) {
         if (err || !service) {
           return res.send('no\n')
         }
