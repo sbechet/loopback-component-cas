@@ -3,27 +3,27 @@
   <SOAP-ENV:Body>
     <Response xmlns="urn:oasis:names:tc:SAML:1.0:protocol" xmlns:saml="urn:oasis:names:tc:SAML:1.0:assertion"
     xmlns:samlp="urn:oasis:names:tc:SAML:1.0:protocol" xmlns:xsd="http://www.w3.org/2001/XMLSchema"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" IssueInstant="${profile.issueinstant}"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" IssueInstant="${input.profile.issueinstant}"
     MajorVersion="1" MinorVersion="1" Recipient="https://eiger.iad.vt.edu/dat/home.do"
-    ResponseID="${profile.responseid}">
+    ResponseID="${input.profile.responseid}">
       <Status>
         <StatusCode Value="samlp:Success">
         </StatusCode>
       </Status>
-      <Assertion xmlns="urn:oasis:names:tc:SAML:1.0:assertion" AssertionID="${profile.responseid}"
-      IssueInstant="${profile.issueinstant}" Issuer="loopback-component-cas" MajorVersion="1"
+      <Assertion xmlns="urn:oasis:names:tc:SAML:1.0:assertion" AssertionID="${input.profile.responseid}"
+      IssueInstant="${input.profile.issueinstant}" Issuer="loopback-component-cas" MajorVersion="1"
       MinorVersion="1">
-        <Conditions NotBefore="${profile.issueinstant}" NotOnOrAfter="${profile.issueinstant}">
+        <Conditions NotBefore="${input.profile.issueinstant}" NotOnOrAfter="${input.profile.issueinstant}">
           <AudienceRestrictionCondition>
             <Audience>
-              ${profile.audience}
+              ${input.profile.audience}
             </Audience>
           </AudienceRestrictionCondition>
         </Conditions>
 
         <AttributeStatement>
           <Subject>
-            <NameIdentifier>${profile.uuid}</NameIdentifier>
+            <NameIdentifier>${input.profile.uuid}</NameIdentifier>
             <SubjectConfirmation>
               <ConfirmationMethod>
                 urn:oasis:names:tc:SAML:1.0:cm:artifact
@@ -31,8 +31,8 @@
             </SubjectConfirmation>
           </Subject>
 
-          <if(profile.attributes.extraAttributes)>
-            <for(name,value in profile.attributes.standardAttributes)>
+          <if(input.profile.attributes.extraAttributes)>
+            <for(name,value in input.profile.attributes.standardAttributes)>
               <if(name === 'memberOf')>
                 <for (group in value)>
                   <Attribute AttributeName="groupMembership" AttributeNamespace="http://www.ja-sig.org/products/cas/">
@@ -48,7 +48,7 @@
             </for>
           </if>
 
-          <for(name,value in profile.attributes.extraAttributes)>
+          <for(name,value in input.profile.attributes.extraAttributes)>
             <Attribute AttributeName="${name}" AttributeNamespace="http://www.ja-sig.org/products/cas/">
               <AttributeValue>${value}</AttributeValue>
             </Attribute>
@@ -56,10 +56,10 @@
 
         </AttributeStatement>
 
-        <AuthenticationStatement AuthenticationInstant="${profile.issueinstant}"
+        <AuthenticationStatement AuthenticationInstant="${input.profile.issueinstant}"
         AuthenticationMethod="urn:oasis:names:tc:SAML:1.0:am:password">
           <Subject>
-            <NameIdentifier>${profile.uuid}</NameIdentifier>
+            <NameIdentifier>${input.profile.uuid}</NameIdentifier>
             <SubjectConfirmation>
               <ConfirmationMethod>
                 urn:oasis:names:tc:SAML:1.0:cm:artifact
