@@ -1,5 +1,6 @@
 'use strict'
 
+const { URL } = require('url')
 const debug = require('debug')('loopback:component:cas')
 
 /* p1Validate */

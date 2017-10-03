@@ -3,20 +3,20 @@
   <SOAP-ENV:Body>
     <Response xmlns="urn:oasis:names:tc:SAML:1.0:protocol" xmlns:saml="urn:oasis:names:tc:SAML:1.0:assertion"
     xmlns:samlp="urn:oasis:names:tc:SAML:1.0:protocol" xmlns:xsd="http://www.w3.org/2001/XMLSchema"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" IssueInstant="${profile.issueinstant}"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" IssueInstant="${input.profile.issueinstant}"
     MajorVersion="1" MinorVersion="1" Recipient="https://eiger.iad.vt.edu/dat/home.do"
-    ResponseID="${profile.responseid}">
+    ResponseID="${input.profile.responseid}">
       <Status>
         <StatusCode Value="samlp:Success">
         </StatusCode>
       </Status>
-      <Assertion xmlns="urn:oasis:names:tc:SAML:1.0:assertion" AssertionID="${profile.responseid}"
-      IssueInstant="${profile.issueinstant}" Issuer="loopback-component-cas" MajorVersion="1"
+      <Assertion xmlns="urn:oasis:names:tc:SAML:1.0:assertion" AssertionID="${input.profile.responseid}"
+      IssueInstant="${input.profile.issueinstant}" Issuer="loopback-component-cas" MajorVersion="1"
       MinorVersion="1">
-        <Conditions NotBefore="${profile.issueinstant}" NotOnOrAfter="${profile.issueinstant}">
+        <Conditions NotBefore="${input.profile.issueinstant}" NotOnOrAfter="${input.profile.issueinstant}">
           <AudienceRestrictionCondition>
             <Audience>
-              ${profile.audience}
+              ${input.profile.audience}
             </Audience>
           </AudienceRestrictionCondition>
         </Conditions>

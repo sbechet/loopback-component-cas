@@ -1,5 +1,7 @@
 'use strict'
 
+const { URL } = require('url')
+
 const Promise = require('bluebird')
 const moment = require('moment')
 const crypto = require('crypto')
@@ -215,8 +217,10 @@ module.exports = function (app, config, req, res, next, isProtocol3) {
                 returnProfile.responseid = responseID
 //                debug('returnProfile: ', JSON.stringify(returnData))
               }
-//              debug('rendering: ', xmlvalid.renderToString(returnProfile))
-              return res.send(xmlvalid.renderToString(returnProfile))
+//              debug('rendering: ', xmlvalid.renderToString({profile: returnProfile}))
+              return res.send(xmlvalid.renderToString({
+                profile: returnProfile
+              }))
             })
           })
         })

@@ -4,7 +4,7 @@ const { URL } = require('url')
 
 const debug = require('debug')('loopback:component:cas')
 
-function loginGet(app, config, req, res, next, service) {
+function loginGet(app, config, req, res, next, serviceUrl, service) {
   const renew = req.query['renew']
 
   // process pre-existing login
@@ -32,10 +32,9 @@ function loginGet(app, config, req, res, next, service) {
           return
         }
         debug('CAS* generate service ticket %s for %s', st, service.name)
-        let testquery = new URL(service.url)
-        let sep = (testquery.length<=1)?'?':'&'
-        let redirection = service.url + sep +"ticket=" + st
-        return res.redirect(303, redirection)
+        let redirection = new URL(serviceUrl)
+        redirection.searchParams.set('ticket', st)
+        return res.redirect(303, redirection.href)
       })
     })
   } else {
@@ -49,7 +48,7 @@ function loginGet(app, config, req, res, next, service) {
       })
     }
     // auth
-    let encode = encodeURIComponent("https://" + app.get('host') + ":" + app.get('port') + "/cas/login?service=" + service.url)
+    let encode = encodeURIComponent("https://" + app.get('host') + ":" + app.get('port') + "/cas/login?service=" + serviceUrl)
     return res.redirect(config.loginPage + "?redirect=" + encode)
   }
 }
@@ -79,10 +78,10 @@ module.exports = function (app, config, req, res, next) {
     }
 
     if (req.method.toUpperCase() == 'GET') {
-      loginGet(app, config, req, res, next, service)
+      loginGet(app, config, req, res, next, serviceUrl, service)
     } else {
       // POST auth protocol modification
-      let encode = encodeURIComponent("https://" + app.get('host') + ":" + app.get('port') + "/cas/login?service=" + service.url)
+      let encode = encodeURIComponent("https://" + app.get('host') + ":" + app.get('port') + "/cas/login?service=" + serviceUrl)
       res.redirect(config.loginPage + "?redirect=" + encode)
     }
   })

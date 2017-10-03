@@ -1,9 +1,9 @@
 <samlp:LogoutRequest
     xmlns:samlp="urn:oasis:names:tc:SAML:2.0:protocol"
     xmlns:saml="urn:oasis:names:tc:SAML:2.0:assertion"
-    ID="${profile.sloId}"
+    ID="${input.profile.sloId}"
     Version="2.0"
     IssueInstant="${new Date().toISOString()}">
     <saml:NameID>@NOT_USED@</saml:NameID>
-    <samlp:SessionIndex>${profile.st.tid}</samlp:SessionIndex>
+    <samlp:SessionIndex>${input.profile.st.tid}</samlp:SessionIndex>
 </samlp:LogoutRequest>
