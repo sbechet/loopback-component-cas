@@ -17,9 +17,9 @@ module.exports = function (loopbackApplication, options) {
 
   let loginCallback = options.loginCallback || function(service, user) {
     let loginOk = {
-      loopback-component: 'cas',
-      service: service.name,
-      email: user.email
+      'loopback-component': 'cas',
+      'service': service.name,
+      'email': user.email
     }
     debug('loginCallback: ', JSON.stringify(loginOk));
   }
