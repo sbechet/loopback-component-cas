@@ -127,7 +127,8 @@ In `server/component-config.json`
     "languages",
     "userId",
     "uuid"
-  ]
+  ],
+  "loginCallback": "loginCallback"
 }
 ```
 
@@ -137,6 +138,8 @@ Attributes may comply with [contact schema](https://tools.ietf.org/html/draft-sm
 established by [Joseph Smarr][schema-author].
 
 Attributes can be any key from `${userModel}.profile`.
+
+If optional `loginCallback(service, user)` exist, `loopback-component-cas` call it when login occure.
 
 ### Specific case
 

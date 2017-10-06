@@ -4,7 +4,7 @@ const { URL } = require('url')
 const debug = require('debug')('loopback:component:cas')
 
 /* p1Validate */
-module.exports = function (app, config, req, res, next) {
+module.exports = function (app, config, req, res, next, loginCallback) {
   let serviceUrl = req.query['service']
   let URLserviceUrl = new URL(serviceUrl)
   let URLorigin = URLserviceUrl.origin
@@ -49,6 +49,8 @@ module.exports = function (app, config, req, res, next) {
             }))
           }
           debug('CAS1 validate (email: %s, service: %s)', user.email, service.name)
+          loginCallback(service, user);
+
           return res.send('yes\n')
         })
       })

@@ -20,7 +20,7 @@ const errorCodes = {
 }
 
 /* p23Validate */
-module.exports = function (app, config, req, res, next, isProtocol3) {
+module.exports = function (app, config, req, res, next, loginCallback, isProtocol3) {
 
   let getRolesNameFromUserId = function(app, userid) {
     return new Promise(function(resolve) {
@@ -240,6 +240,7 @@ module.exports = function (app, config, req, res, next, isProtocol3) {
             getAttributes(app, config, user, tgt).then(function(returnProfile){
               let casversion = isProtocol3?'3':'2'
               debug('CAS%d validate (email:%s, service: %s)', casversion, user.email, service.name)
+              loginCallback(service, user);
 
               /* 'TARGET' in req.query ? -> SAML */
               if (req.query['TARGET']) {

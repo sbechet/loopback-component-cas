@@ -9,7 +9,7 @@ const debug = require('debug')('loopback:component:cas')
 
 
 /* samlValidate */
-module.exports = function (app, config, req, res, next) {
+module.exports = function (app, config, req, res, next, loginCallback) {
   let MajorVersion = req.body['SOAP-ENV:Envelope']['SOAP-ENV:Body']['samlp:Request']['$']['MajorVersion']
   //let MinorVersion = req.body['SOAP-ENV:Envelope']['SOAP-ENV:Body']['samlp:Request']['$']['MinorVersion']
   // RequestID like '_192.168.16.51.1024506224022'
@@ -22,7 +22,7 @@ module.exports = function (app, config, req, res, next) {
     // The TARGET variable will be the indication of the SAML protcol
     req.query['service'] = req.query['TARGET']
     req.query['ticket'] = req.body['SOAP-ENV:Envelope']['SOAP-ENV:Body']['samlp:Request']['samlp:AssertionArtifact']
-    p23Validate(app, config, req, res, next, true)
+    p23Validate(app, config, req, res, next, loginCallback, true)
   } else {
     debug('TODO:samlValidate:protocol>1.1')
     return res.send(xml.invalidSTSaml.renderToString({

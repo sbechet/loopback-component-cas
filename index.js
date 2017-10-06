@@ -15,6 +15,15 @@ module.exports = function (loopbackApplication, options) {
     options.userModel = "User"
   }
 
+  let loginCallback = options.loginCallback || function(service, user) {
+    let loginOk = {
+      loopback-component: 'cas',
+      service: service.name,
+      email: user.email
+    }
+    debug('loginCallback: ', JSON.stringify(loginOk));
+  }
+
   loopbackApplication.all('/cas/login', function(req, res, next) {
   debug('/cas/login')
   login(loopbackApplication, options, req, res, next)
@@ -27,22 +36,22 @@ module.exports = function (loopbackApplication, options) {
 
   loopbackApplication.get('/cas/validate', function(req, res, next) {
     debug('/cas/validate')
-    p1Validate(loopbackApplication, options, req, res, next)
+    p1Validate(loopbackApplication, options, req, res, next, loginCallback)
   })
 
   loopbackApplication.get('/cas/serviceValidate', function(req, res, next) {
     debug('/cas/serviceValidate')
-    p23Validate(loopbackApplication, options, req, res, next, false)
+    p23Validate(loopbackApplication, options, req, res, next, loginCallback, false)
   })
 
   loopbackApplication.get('/cas/p3/serviceValidate', function(req, res, next) {
     debug('/cas/p3/serviceValidate')
-    p23Validate(loopbackApplication, options, req, res, next, true)
+    p23Validate(loopbackApplication, options, req, res, next, loginCallback, true)
   })
 
   loopbackApplication.post('/cas/samlValidate', function(req, res, next) {
     debug('/cas/samlValidate')
-    samlValidate(loopbackApplication, options, req, res, next)
+    samlValidate(loopbackApplication, options, req, res, next, loginCallback)
   })
 
 }
