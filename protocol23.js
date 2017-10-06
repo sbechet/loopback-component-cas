@@ -43,62 +43,81 @@ module.exports = function (app, config, req, res, next, isProtocol3) {
     })
   }
   let getAttributes = Promise.coroutine(function* (app, config, user, tgt) {
+    /* uuid always here */
     let returnProfile = {
-      uuid: user.uuid
+      uuid: user.uuid,
+      CAS3attributes: {}
     }
 
-    if (config.attributes) {
-      returnProfile.attributes = {}
-      if (config.attributes.standardAttributes)
-        returnProfile.attributes.standardAttributes = {}
-      if (config.attributes.extraAttributes)
-        returnProfile.attributes.extraAttributes = {}
-    }
-
-    for (let att of config.attributes.standardAttributes) {
-      if (att === "authenticationDate") {
-        returnProfile.attributes.standardAttributes.authenticationDate = moment(tgt.created).format("YYYY-MM-DDThh:mm:ss")
-      } else if (att === "longTermAuthenticationRequestTokenUsed") {
-        //TODO: how to know?
-        returnProfile.attributes.standardAttributes.longTermAuthenticationRequestTokenUsed = false
-      } else if (att === "isFromNewLogin") {
-        //TODO: how to know?
-        returnProfile.attributes.standardAttributes.isFromNewLogin=false
-      } else if (att === "memberOf") {
-        returnProfile.attributes.standardAttributes.memberOf = yield getRolesNameFromUserId(app, user.id)
+    /* Step 1: Standard CAS3 Attributes */
+    if (config.attributes && config.attributes.length != 0) {
+      for (let att of config.attributes) {
+        switch (att) {
+          case 'authenticationDate':
+            returnProfile.CAS3attributes.authenticationDate = moment(tgt.created).format("YYYY-MM-DDThh:mm:ss")
+            break
+          case 'longTermAuthenticationRequestTokenUsed':
+            returnProfile.CAS3attributes.longTermAuthenticationRequestTokenUsed = false  //TODO: how to know?
+            break
+          case 'isFromNewLogin':
+            returnProfile.CAS3attributes.isFromNewLogin=false  //TODO: how to know?
+            break
+          case 'memberOf':
+            returnProfile.CAS3attributes.memberOf = yield getRolesNameFromUserId(app, user.id)
+            break
+        }
       }
     }
 
-    if (user.profile) {
-      let profile
-      // user.profile _is_ JSON
-      try {
+    /* Step 2: Specific attributes */
+    // user.profile _is_ JSON
+    let profile = {}
+    try {
+      if (user.profile) {
         profile = JSON.parse(user.profile)
+      }
 
-        for (let att of config.attributes.extraAttributes) {
-          // email is a specific case
-          if (att.toLowerCase() === "email") {
-            returnProfile.attributes.extraAttributes.email = user.email
-          } else if (profile[att]) {
-            returnProfile.attributes.extraAttributes[att] = profile[att]
+      /* userId is the user's unique number for all applications */
+      profile.userId = user.uuid;
+      /* uuid always here */
+      profile.uuid = user.uuid;
+
+      /*
+        Normalized profile information conforms to the
+        [contact schema](https://tools.ietf.org/html/draft-smarr-vcarddav-portable-contacts-00)
+        established by [Joseph Smarr][schema-author].
+
+        We use it for specific useful key like firstname and lastname.
+      */
+
+      if (config.attributes && config.attributes.length != 0) {
+        returnProfile.attributes = {}
+
+        for (let att of config.attributes) {
+          switch (att.toLowerCase()) {
+            case "email":
+              // email is a specific case
+              returnProfile.attributes.email = user.email
+              break
+            case "firstname":
+              returnProfile.attributes.firstname = profile.name.givenName
+              break
+            case "lastname":
+              returnProfile.attributes.lastname = profile.name.familyName
+              break
+            default:
+              if ( (att != 'authenticationDate') &&
+                  (att != 'longTermAuthenticationRequestTokenUsed') &&
+                  (att != 'isFromNewLogin') &&
+                  (att != 'memberOf') ) {
+                    returnProfile.attributes[att] = profile[att]
+              }
           }
         }
-
-        /*
-          Normalized profile information conforms to the
-          [contact schema](https://tools.ietf.org/html/draft-smarr-vcarddav-portable-contacts-00)
-          established by [Joseph Smarr][schema-author].
-
-          Nevertheless, we use it for specific useful key.
-        */
-        returnProfile.attributes.extraAttributes.firstname = profile.name.givenName
-        returnProfile.attributes.extraAttributes.lastname = profile.name.familyName
-        returnProfile.attributes.extraAttributes.userId = returnProfile.uuid
-        returnProfile.attributes.extraAttributes.uuid = returnProfile.uuid
-
-      } catch (e) {
-        debug("ERROR: %s", e)
       }
+
+    } catch (e) {
+      debug("ERROR: %s", e)
     }
 
     return returnProfile
@@ -126,7 +145,7 @@ module.exports = function (app, config, req, res, next, isProtocol3) {
       message: 'Not all of the required request parameters were present',
       responseid: responseID,
       issueinstant: moment().toISOString(),
-      audience: service.url
+      audience: URLorigin
     }))
   }
 
@@ -146,7 +165,7 @@ module.exports = function (app, config, req, res, next, isProtocol3) {
         message: `ticket ${ticket} was not recognized`,
         responseid: responseID,
         issueinstant: moment().toISOString(),
-        audience: service.url
+        audience: URLorigin
       }))
     }
 
@@ -159,7 +178,7 @@ module.exports = function (app, config, req, res, next, isProtocol3) {
           message: `service ticket ${ticket} could not be invalidated`,
           responseid: responseID,
           issueinstant: moment().toISOString(),
-          audience: service.url
+          audience: URLorigin
         }))
       }
 
@@ -172,7 +191,7 @@ module.exports = function (app, config, req, res, next, isProtocol3) {
             message: `service ${serviceUrl} was not recognized`,
             responseid: responseID,
             issueinstant: moment().toISOString(),
-            audience: service.url
+            audience: URLorigin
           }))
         }
 
@@ -186,12 +205,12 @@ module.exports = function (app, config, req, res, next, isProtocol3) {
             message: `service ${serviceUrl} was not recognized`,
             responseid: responseID,
             issueinstant: moment().toISOString(),
-            audience: service.url
+            audience: URLorigin
           }))
         }
 
         if (isProtocol3) {
-          // TODO: record here (TGT, service) for Single Logout (SLO)
+          // TODO: record in database (TGT, service) for Single Logout (SLO)
           // See 2.3.3. The CAS Server MAY support Single Logout (SLO)
         }
 
@@ -203,7 +222,7 @@ module.exports = function (app, config, req, res, next, isProtocol3) {
               message: 'Internal Error',
               responseid: responseID,
               issueinstant: moment().toISOString(),
-              audience: service.url
+              audience: URLorigin
             }))
           }
 
@@ -215,7 +234,7 @@ module.exports = function (app, config, req, res, next, isProtocol3) {
                 message: 'Internal Error',
                 responseid: responseID,
                 issueinstant: moment().toISOString(),
-                audience: service.url
+                audience: URLorigin
               }))
             }
             getAttributes(app, config, user, tgt).then(function(returnProfile){
@@ -225,14 +244,12 @@ module.exports = function (app, config, req, res, next, isProtocol3) {
               /* 'TARGET' in req.query ? -> SAML */
               if (req.query['TARGET']) {
                 returnProfile.issueinstant = moment().toISOString()
-                returnProfile.audience = service.url
+                returnProfile.audience = URLorigin
                 returnProfile.responseid = responseID
 //                debug('returnProfile: ', JSON.stringify(returnData))
               }
 //              debug('rendering: ', xmlvalid.renderToString({profile: returnProfile}))
-              return res.send(xmlvalid.renderToString({
-                profile: returnProfile
-              }))
+              return res.send(xmlvalid.renderToString(returnProfile))
             })
           })
         })

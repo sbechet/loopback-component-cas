@@ -1,33 +1,26 @@
-<!-- Successful Service Ticket Validation 2.0/3.0 -->
 <cas:serviceResponse xmlns:cas="http://www.yale.edu/tp/cas">
  <cas:authenticationSuccess>
-  <cas:user>${input.profile.uuid}</cas:user>
-  <!--<cas:proxyGrantingTicket>PGTIOU-84678-8a9d...</cas:proxyGrantingTicket>-->
 
-  <cas:attributes if(input.profile.attributes)>
-    <if(input.profile.attributes.standardAttributes)>
-      <!-- This floating $ denotes a JS block in Marko v4 -->
-      $ let attrs=input.profile.attributes.standardAttributes
-      <cas:authenticationDate if(attrs.authenticationDate)>${attrs.authenticationDate}</cas:authenticationDate>
-      <cas:longTermAuthenticationRequestTokenUsed if(attrs.longTermAuthenticationRequestTokenUsed)>
-        ${attrs.longTermAuthenticationRequestTokenUsed}
-      </cas:longTermAuthenticationRequestTokenUsed>
-      <cas:isFromNewLogin if(attrs.isFromNewLogin)>${attrs.isFromNewLogin}</cas:isFromNewLogin>
-      <if(attrs.memberOf)>
-        <cas:memberOf for(group in attrs.memberOf)>${group}</cas:memberOf>
+  <cas:user>${input.uuid}</cas:user>
+
+  <cas:attributes if(input.attributes)>
+
+    <for(name,value in input.CAS3attributes)>
+      <cas:authenticationDate if(name === 'authenticationDate')>${value}</cas:authenticationDate>
+      <cas:longTermAuthenticationRequestTokenUsed if(name === 'longTermAuthenticationRequestTokenUsed')>${value}</cas:longTermAuthenticationRequestTokenUsed>
+      <cas:isFromNewLogin if(name === 'isFromNewLogin')>${value}</cas:isFromNewLogin>
+      <if(name === 'memberOf')>
+        <cas:memberOf for(group in value)>${group}</cas:memberOf>
       </if>
+    </for>
+
+    <if(input.attributes)>
+      <for(name,value in input.attributes)>
+        <cas:${name}>${value}</cas:${name}>
+      </for>
     </if>
 
-    <if(input.profile.attributes.extraAttributes)>
-       <for(name,value in input.profile.attributes.extraAttributes)>
-        <if(name === 'memberOf')>
-          <cas:memberOf for(group in value)>${group}</cas:memberOf>
-        </if>
-        <else>
-          <cas:${name}>${value}</cas:${name}>
-        </else>
-       </for>
-    </if>
   </cas:attributes>
+
  </cas:authenticationSuccess>
 </cas:serviceResponse>

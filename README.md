@@ -11,14 +11,16 @@ DONE : CASv1, CASv2, CASv3, SAMLv1.1
 
 TODO : SLO logout, SAMLv2
 
-Note : some `xmlTemplates/` files coming from [https://github.com/jscas/cas-server](jscas).
-
 ## Installation
 
 * `npm i loopback-component-cas`
 * Don't forget to add `express-xml-bodyparser` to your project
 
 ## Configuration
+
+### Application Model
+
+You MUST use `application` model to store `url.origin` in url field.
 
 ### User Model
 
@@ -113,16 +115,31 @@ In `server/component-config.json`
   "loginPage": "/account/signin",
   "logoutPage": "/account/signout",
   "userModel": "User",
-  "attributes": {
-    "standardAttributes": [ "authenticationDate", "longTermAuthenticationRequestTokenUsed", "isFromNewLogin", "memberOf" ],
-    "extraAttributes": ["Fullname", "email"]
-  }
+  "attributes": [
+    "authenticationDate",
+    "longTermAuthenticationRequestTokenUsed",
+    "isFromNewLogin",
+    "memberOf",
+    "email",
+    "displayName",
+    "firstname",
+    "lastname",
+    "languages",
+    "userId",
+    "uuid"
+  ]
 }
 ```
 
-* extraAttributes can be any key from `${userModel}.profile`.
-* `${userModel}.uuid` is always injected
+`${userModel}.uuid` is always injected
 
-## Database configuration
+Attributes may comply with [contact schema](https://tools.ietf.org/html/draft-smarr-vcarddav-portable-contacts-00)
+established by [Joseph Smarr][schema-author].
 
-You MUST use `application` model to store `url.origin` in url field.
+Attributes can be any key from `${userModel}.profile`.
+
+### Specific case
+
+* `email` come from model `${userModel}.email`
+* `firstname` come from  `${userModel}.profile.name.givenName`
+* `lastname`  come from  `${userModel}.profile.name.familyName`
