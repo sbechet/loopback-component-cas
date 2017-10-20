@@ -110,7 +110,11 @@ module.exports = function (app, config, req, res, next, loginCallback, isProtoco
                   (att != 'longTermAuthenticationRequestTokenUsed') &&
                   (att != 'isFromNewLogin') &&
                   (att != 'memberOf') ) {
-                    returnProfile.attributes[att] = profile[att]
+                if (typeof profile[att] == 'object') {
+                  returnProfile.attributes[att] = JSON.stringify(profile[att])
+                } else {
+                  returnProfile.attributes[att] = profile[att]
+                }
               }
           }
         }
