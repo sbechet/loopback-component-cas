@@ -20,7 +20,7 @@ TODO : SLO logout, SAMLv2
 
 ### Application Model
 
-You MUST use `application` model to store `url.origin` in url field.
+You MUST use `application` model to store RegExp url field.
 
 ### User Model
 
