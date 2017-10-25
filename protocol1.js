@@ -2,6 +2,7 @@
 
 const { URL } = require('url')
 const debug = require('debug')('loopback:component:cas')
+const findService = require('./tools.js').findService
 
 /* p1Validate */
 module.exports = function (app, config, req, res, next, loginCallback) {
@@ -28,7 +29,7 @@ module.exports = function (app, config, req, res, next, loginCallback) {
       }
 
       // validate service
-      app.models.Application.findOne({ where: { url: URLorigin } },function(err, service) {
+      findService(app, serviceUrl,function(err, service) {
         if (err || !service) {
           return res.send('no\n')
         }

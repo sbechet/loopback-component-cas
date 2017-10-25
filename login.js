@@ -2,6 +2,7 @@
 
 const { URL } = require('url')
 
+const findService = require('./tools.js').findService
 const debug = require('debug')('loopback:component:cas')
 
 function loginGet(app, config, req, res, next, serviceUrl, service) {
@@ -64,7 +65,7 @@ module.exports = function (app, config, req, res, next) {
   }
 
   // validate service
-  app.models.Application.findOne({ where: { url: URLorigin } },function(err, service) {
+  findService(app, serviceUrl, function(err, service) {
     if (err) {
       let error = new Error(err)
       error.status = 500

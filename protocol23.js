@@ -6,6 +6,7 @@ const Promise = require('bluebird')
 const moment = require('moment')
 const crypto = require('crypto')
 const xml = require('./xml')
+const findService = require('./tools.js').findService
 
 const debug = require('debug')('loopback:component:cas')
 
@@ -187,7 +188,7 @@ module.exports = function (app, config, req, res, next, loginCallback, isProtoco
       }
 
       // validate service
-      app.models.Application.findOne({ where: { url: URLorigin } },function(err, service) {
+      findService(app, serviceUrl, function(err, service) {
         if (err || !service) {
           debug('service '+ serviceUrl + ' not recognized')
           return res.send(xmlinvalid.renderToString({
