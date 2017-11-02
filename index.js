@@ -15,9 +15,10 @@ module.exports = function (loopbackApplication, options) {
     options.userModel = "User"
   }
 
-  let loginCallback = options.loginCallback || function(service, user) {
+  let loginCallback = options.loginCallback || function(req, service, user) {
     let loginOk = {
       'loopback-component': 'cas',
+      'ip': req.ip,
       'service': service.name,
       'email': user.email
     }

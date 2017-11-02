@@ -245,7 +245,7 @@ module.exports = function (app, config, req, res, next, loginCallback, isProtoco
             getAttributes(app, config, user, tgt).then(function(returnProfile){
               let casversion = isProtocol3?'3':'2'
               debug('CAS%d validate (email:%s, service: %s)', casversion, user.email, service.name)
-              loginCallback(service, user);
+              loginCallback(req, service, user);
 
               /* 'TARGET' in req.query ? -> SAML */
               if (req.query['TARGET']) {

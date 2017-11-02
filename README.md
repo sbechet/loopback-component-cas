@@ -139,7 +139,7 @@ established by [Joseph Smarr][schema-author].
 
 Attributes can be any key from `${userModel}.profile`.
 
-If optional `loginCallback(service, user)` exist, `loopback-component-cas` call it when login occure.
+If optional `loginCallback(req, service, user)` exist, `loopback-component-cas` call it when login occure.
 
 ### Specific case
 

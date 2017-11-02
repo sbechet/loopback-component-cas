@@ -50,7 +50,7 @@ module.exports = function (app, config, req, res, next, loginCallback) {
             }))
           }
           debug('CAS1 validate (email: %s, service: %s)', user.email, service.name)
-          loginCallback(service, user);
+          loginCallback(req, service, user);
 
           return res.send('yes\n')
         })
