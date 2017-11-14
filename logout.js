@@ -1,9 +1,11 @@
 'use strict'
 
+const url = require('url')
+
 /* logout */
 module.exports = function (app, config, req, res, next) {
   let serviceUrl = req.query['service']
-  let URLserviceUrl = new URL(serviceUrl)
+  let URLserviceUrl = url.parse(serviceUrl)
   let URLorigin = URLserviceUrl.origin
 
   if (req.accesstoken) {
