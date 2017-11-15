@@ -7,11 +7,18 @@ const findService = require('./tools.js').findService
 /* p1Validate */
 module.exports = function (app, config, req, res, next, loginCallback) {
   let serviceUrl = req.query['service']
-  let URLserviceUrl = new URL(serviceUrl)
-  let URLorigin = URLserviceUrl.origin
   let ticket = req.query['ticket']
+  let URLserviceUrl
 
-  if (!ticket || !serviceUrl) {
+  try {
+    URLserviceUrl = new URL(serviceUrl)
+  } catch (error) {
+    if (serviceUrl !== undefined)
+      debug('Malformed service? ',serviceUrl)
+    return res.send('no\n')
+  }
+
+  if (!ticket) {
     debug('ERROR: Not all of the required request parameters were present.')
     return res.send('no\n')
   }

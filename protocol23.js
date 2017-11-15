@@ -135,12 +135,22 @@ module.exports = function (app, config, req, res, next, loginCallback, isProtoco
   let responseID = '_' + crypto.randomBytes(16).toString('hex')
 
   let serviceUrl = req.query['service']
-  let URLserviceUrl = new URL(serviceUrl)
-  let URLorigin = URLserviceUrl.origin
   let ticket = req.query['ticket']
 
+  let URLserviceUrl
+  let URLorigin
 
   res.type('text/xml')
+
+  try {
+    URLserviceUrl = new URL(serviceUrl)
+    URLorigin = URLserviceUrl.origin
+  } catch (error) {
+    if (serviceUrl !== undefined)
+      debug('Malformed service? ',serviceUrl)
+    delete serviceUrl
+    URLorigin = 'http://malformed.nowhere'
+  }
 
   if (!ticket || !serviceUrl) {
     debug('Not all of the required request parameters were present.')
