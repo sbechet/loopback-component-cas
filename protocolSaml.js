@@ -4,7 +4,6 @@ const Promise = require('bluebird')
 const moment = require('moment')
 const p23Validate = require('./protocol23.js')
 const xml = require('./xml')
-
 const debug = require('debug')('loopback:component:cas')
 
 

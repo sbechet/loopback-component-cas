@@ -1,7 +1,6 @@
 'use strict'
 
 const { URL } = require('url')
-
 const Promise = require('bluebird')
 const moment = require('moment')
 const crypto = require('crypto')

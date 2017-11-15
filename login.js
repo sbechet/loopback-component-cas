@@ -1,7 +1,6 @@
 'use strict'
 
 const { URL } = require('url')
-
 const findService = require('./tools.js').findService
 const debug = require('debug')('loopback:component:cas')
 

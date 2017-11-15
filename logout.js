@@ -1,5 +1,7 @@
 'use strict'
 
+const { URL } = require('url')
+
 /* logout */
 module.exports = function (app, config, req, res, next) {
   let serviceUrl = req.query['service']
