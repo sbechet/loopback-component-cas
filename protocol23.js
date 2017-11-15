@@ -1,6 +1,7 @@
 'use strict'
 
-const url = require('url')
+const { URL } = require('url')
+
 const Promise = require('bluebird')
 const moment = require('moment')
 const crypto = require('crypto')
@@ -135,7 +136,7 @@ module.exports = function (app, config, req, res, next, loginCallback, isProtoco
   let responseID = '_' + crypto.randomBytes(16).toString('hex')
 
   let serviceUrl = req.query['service']
-  let URLserviceUrl = url.parse(serviceUrl)
+  let URLserviceUrl = new URL(serviceUrl)
   let URLorigin = URLserviceUrl.origin
   let ticket = req.query['ticket']
 

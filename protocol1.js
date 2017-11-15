@@ -1,13 +1,13 @@
 'use strict'
 
-const url = require('url')
+const { URL } = require('url')
 const debug = require('debug')('loopback:component:cas')
 const findService = require('./tools.js').findService
 
 /* p1Validate */
 module.exports = function (app, config, req, res, next, loginCallback) {
   let serviceUrl = req.query['service']
-  let URLserviceUrl = url.parse(serviceUrl)
+  let URLserviceUrl = new URL(serviceUrl)
   let URLorigin = URLserviceUrl.origin
   let ticket = req.query['ticket']
 
