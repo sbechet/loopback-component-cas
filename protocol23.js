@@ -148,7 +148,7 @@ module.exports = function (app, config, req, res, next, loginCallback, isProtoco
   } catch (error) {
     if (serviceUrl !== undefined)
       debug('Malformed service? ',serviceUrl)
-    delete serviceUrl
+    serviceUrl = undefined
     URLorigin = 'http://malformed.nowhere'
   }
 
