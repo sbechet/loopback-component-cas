@@ -47,7 +47,7 @@ function loginGet(app, config, req, res, next, URLserviceUrl, service) {
       })
     }
     // auth
-    let encode = encodeURIComponent("https://" + app.get('host') + ":" + app.get('port') + "/cas/login?service=" + serviceUrl)
+    let encode = encodeURIComponent("https://" + app.get('host') + ":" + app.get('port') + "/cas/login?service=" + URLserviceUrl.href)
     return res.redirect(config.loginPage + "?redirect=" + encode)
   }
 }
