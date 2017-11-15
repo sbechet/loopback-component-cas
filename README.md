@@ -9,7 +9,7 @@ Use it with [loopback](https://github.com/strongloop/loopback)
 
 DONE : CASv1, CASv2, CASv3, SAMLv1.1
 
-TODO : SLO logout, SAMLv2
+TODO : SLO logout, SAMLv2, Regression Test
 
 ## Installation
 
