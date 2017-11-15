@@ -1,12 +1,8 @@
 'use strict'
 
-const { URL } = require('url')
-
 /* logout */
 module.exports = function (app, config, req, res, next) {
   let serviceUrl = req.query['service']
-  let URLserviceUrl = new URL(serviceUrl)
-  let URLorigin = URLserviceUrl.origin
 
   if (req.accesstoken) {
     eval('app.models.' + config.userModel).logout(req.accessToken.id,function(err) {
@@ -15,29 +11,14 @@ module.exports = function (app, config, req, res, next) {
       next(error)
       return
     })
+
+    // TODO here : Single Logout (SLO): Send here SAML messages to deconnect (TGT, service)
+
   }
 
-  if (!serviceUrl || !req.accesstoken) {
+  if (!serviceUrl) {
     return res.redirect(config.logoutPage)
+  else {
+    return res.redirect(config.logoutPage + "?redirect=" + encodeURIComponent(serviceUrl))
   }
-
-  // validate service
-  app.models.Application.findOne({ where: { url: URLorigin } },function(err, service) {
-    if (err) {
-      let error = new Error(err)
-      error.status = 500
-      next(error)
-      return
-    } else if (service === null) {
-      let error = new Error('could not validate CAS service : ' + serviceUrl)
-      error.status = 400
-      next(error)
-      return
-    }
-
-    // TODO : Single Logout (SLO): Send here SAML messages to deconnect (TGT, service)
-
-    res.redirect(config.logoutPage + "?redirect=" + encodeURIComponent(serviceUrl))
-  })
-
 }
