@@ -33,7 +33,7 @@ function loginGet(app, config, req, res, next, URLserviceUrl, service) {
         }
         debug('CAS* generate service ticket %s for %s', st, service.name)
         URLserviceUrl.searchParams.set('ticket', st)
-        return res.redirect(303, redirection.href)
+        return res.redirect(303, URLserviceUrl.href)
       })
     })
   } else {
