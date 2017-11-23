@@ -46,9 +46,18 @@ function loginGet(app, config, req, res, next, URLserviceUrl, service) {
         return
       })
     }
+
+    // forward GET queries but not "redirect"
+    let q = ''
+    delete req.query.redirect
+    for (let k in req.query) {
+      q = q + `${k}=${req.query[k]}&`
+    }
+    q = q.slice(0, -1)
+
     // auth
     let encode = encodeURIComponent("https://" + app.get('host') + ":" + app.get('port') + "/cas/login?service=" + URLserviceUrl.href)
-    return res.redirect(config.loginPage + "?redirect=" + encode)
+    return res.redirect(config.loginPage + "?redirect=" + encode + '&' + q)
   }
 }
 
