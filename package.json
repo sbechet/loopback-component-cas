@@ -1,6 +1,6 @@
 {
   "name": "loopback-component-cas",
-  "version": "0.5.12",
+  "version": "0.5.13",
   "description": "Loopback CAS Authentification",
   "main": "index.js",
   "scripts": {

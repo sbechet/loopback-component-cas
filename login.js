@@ -7,9 +7,9 @@ const debug = require('debug')('loopback:component:cas')
 
 // GET queries but not "redirect"
 function getQueries(req) {
-  let q = querystring.stringify(req.query)
+  let query = Object.assign({}, req.query)
   delete query.redirect
-  return q
+  return querystring.stringify(query)
 }
 
 function loginGet(app, config, req, res, next, URLserviceUrl, service) {
