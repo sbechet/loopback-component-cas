@@ -1,12 +1,13 @@
 'use strict'
 
+const querystring = require('querystring')
+const debug = require('debug')('loopback:component:cas')
+
 const login = require('./login.js')
 const p1Validate = require('./protocol1.js')
 const p23Validate = require('./protocol23.js')
 const samlValidate = require('./protocolSaml.js')
 const logout = require('./logout.js')
-
-const debug = require('debug')('loopback:component:cas')
 
 module.exports = function (loopbackApplication, options) {
 
@@ -25,14 +26,21 @@ module.exports = function (loopbackApplication, options) {
     debug('loginCallback: ', JSON.stringify(loginOk));
   }
 
+  loopbackApplication.all('/cas', function(req, res, next) {
+    debug('/cas')
+    let q = querystring.stringify(req.query)
+    q = q.length==0?'':'?'+q
+    res.redirect('/cas/login' + q)
+  })
+
   loopbackApplication.all('/cas/login', function(req, res, next) {
-  debug('/cas/login')
-  login(loopbackApplication, options, req, res, next)
+    debug('/cas/login')
+    login(loopbackApplication, options, req, res, next)
   })
 
   loopbackApplication.get('/cas/logout', function(req, res, next) {
-  debug('/cas/logout')
-  logout(loopbackApplication, options, req, res, next)
+    debug('/cas/logout')
+    logout(loopbackApplication, options, req, res, next)
   })
 
   loopbackApplication.get('/cas/validate', function(req, res, next) {

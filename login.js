@@ -1,20 +1,14 @@
 'use strict'
 
+const querystring = require('querystring')
 const { URL } = require('url')
 const findService = require('./tools.js').findService
 const debug = require('debug')('loopback:component:cas')
 
 // GET queries but not "redirect"
 function getQueries(req) {
-  let query = {}
-  let q = ''
-
-  Object.assign(query, req.query)
+  let q = querystring.stringify(req.query)
   delete query.redirect
-  for (let k in query) {
-    q = q + `${k}=${query[k]}&`
-  }
-  q = q.slice(0, -1)
   return q
 }
 
@@ -64,7 +58,7 @@ function loginGet(app, config, req, res, next, URLserviceUrl, service) {
     // auth
     let encode = encodeURIComponent("https://" + app.get('host') + ":" + app.get('port') + "/cas/login?service=" + URLserviceUrl.href)
     let q = getQueries(req)
-    q = q.length==0?q:'&'+q
+    q = q.length==0?'':'&'+q
     return res.redirect(config.loginPage + "?redirect=" + encode + q)
   }
 }
@@ -79,7 +73,9 @@ module.exports = function (app, config, req, res, next) {
   } catch (error) {
     if (serviceUrl !== undefined)
       debug('Malformed service? ',serviceUrl)
-    return res.redirect(config.loginPage + '?' + getQueries(req))
+    let q = getQueries(req)
+    q = q.length==0?'':'?'+q
+    return res.redirect(config.loginPage + q)
   }
 
   // validate service
@@ -102,7 +98,7 @@ module.exports = function (app, config, req, res, next) {
       // POST auth protocol modification
       let encode = encodeURIComponent("https://" + app.get('host') + ":" + app.get('port') + "/cas/login?service=" + serviceUrl)
       let q = getQueries(req)
-      q = q.length==0?q:'&'+q
+      q = q.length==0?'':'&'+q
       res.redirect(config.loginPage + "?redirect=" + encode + q)
     }
   })
