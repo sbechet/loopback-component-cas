@@ -261,10 +261,11 @@ module.exports = function (app, config, req, res, next, loginCallback, isProtoco
                 returnProfile.issueinstant = moment().toISOString()
                 returnProfile.audience = URLorigin
                 returnProfile.responseid = responseID
-//                debug('returnProfile: ', JSON.stringify(returnData))
               }
-//              debug('rendering: ', xmlvalid.renderToString({profile: returnProfile}))
-              return res.send(xmlvalid.renderToString(returnProfile))
+//              debug('returnProfile: ', JSON.stringify(returnProfile))
+//              debug('rendering: ', xmlvalid.renderToString(returnProfile))
+              return xmlvalid.render(returnProfile, res)
+              // return res.send(xmlvalid.renderToString(returnProfile))
             })
           })
         })
