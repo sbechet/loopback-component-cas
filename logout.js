@@ -19,6 +19,6 @@ module.exports = function (app, config, req, res, next) {
   if (!serviceUrl) {
     return res.redirect(config.logoutPage)
   } else {
-    return res.redirect(config.logoutPage + "?redirect=" + encodeURIComponent(serviceUrl))
+    return res.redirect(serviceUrl)
   }
 }
