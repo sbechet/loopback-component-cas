@@ -47,12 +47,7 @@ function loginGet(app, config, req, res, next, URLserviceUrl, service) {
   } else {
     // renew ?
     if (req.accessToken && renew) {
-      eval('app.models.' + config.userModel).logout(req.accessToken.id,function(err) {
-        let error = new Error(err || 'could not logout:' + req.accessToken.id)
-        error.status = 500
-        next(error)
-        return
-      })
+      eval('app.models.' + config.userModel).logout(req.accessToken.id,next)
     }
 
     // auth
