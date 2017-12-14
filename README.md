@@ -88,11 +88,20 @@ CAS redirect on theses pages if necessary.
 
 ### `token` and `express-xml-bodyparser`
 
-In `server/middleware.json`, add token in request and express-xml-bodyparser
+In `server/middleware.json`, add in request cookie-parser, token and express-xml-bodyparser
 
 ```json
+"session:before": {
+   "cookie-parser": {
+     "params": "${cookieSecret}"
+   }
+},
 "auth": {
-  "loopback#token": {}
+  "loopback#token": {
+    "params": {
+      "model": "AccessToken"
+   }
+  }
 },
 "parse": {
   "express-xml-bodyparser": {
@@ -104,6 +113,8 @@ In `server/middleware.json`, add token in request and express-xml-bodyparser
   }
 }
 ```
+
+Don't forget to add `config.json#cookieSecret`.
 
 ## Component configuration
 
