@@ -46,7 +46,7 @@ function loginGet(app, config, req, res, next, URLserviceUrl, service) {
       })
     })
   } else {
-    if (gateway) {
+    if (gateway && !renew) {
       return res.redirect(303, URLserviceUrl.href)
     }
     if (req.accessToken && renew) {
