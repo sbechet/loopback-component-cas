@@ -14,6 +14,7 @@ function getQueries(req) {
 
 function loginGet(app, config, req, res, next, URLserviceUrl, service) {
   const renew = req.query['renew']
+  const gateway = req.query['gateway']
 
   // process pre-existing login
   if (req.accessToken && !renew) {
@@ -45,11 +46,12 @@ function loginGet(app, config, req, res, next, URLserviceUrl, service) {
       })
     })
   } else {
-    // renew ?
+    if (gateway) {
+      return res.redirect(303, URLserviceUrl.href)
+    }
     if (req.accessToken && renew) {
       eval('app.models.' + config.userModel).logout(req.accessToken.id,next)
     }
-
     // auth
     let encode = encodeURIComponent("https://" + app.get('host') + ":" + app.get('port') + "/cas/login?service=" + URLserviceUrl.href)
     let q = getQueries(req)

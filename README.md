@@ -86,7 +86,7 @@ CAS redirect on theses pages if necessary.
 
 * `redirect` [OPTIONAL] - the full URL-encoded service URL as described in section 2.2 of RFC 3986
 
-### `token` and `express-xml-bodyparser`
+### `token`, `cookie-parser` and `express-xml-bodyparser`
 
 In `server/middleware.json`, add in request cookie-parser, token and express-xml-bodyparser
 
