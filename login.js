@@ -53,7 +53,7 @@ function loginGet(app, config, req, res, next, URLserviceUrl, service) {
       eval('app.models.' + config.userModel).logout(req.accessToken.id,next)
     }
     // auth
-    let encode = encodeURIComponent("https://" + app.get('host') + ":" + app.get('port') + "/cas/login?service=" + URLserviceUrl.href)
+    let encode = encodeURIComponent(app.get('accessUrl') + "/cas/login?service=" + URLserviceUrl.href)
     let q = getQueries(req)
     q = q.length==0?'':'&'+q
     return res.redirect(config.loginPage + "?redirect=" + encode + q)
@@ -93,7 +93,7 @@ module.exports = function (app, config, req, res, next) {
       loginGet(app, config, req, res, next, URLserviceUrl, service)
     } else {
       // POST auth protocol modification
-      let encode = encodeURIComponent("https://" + app.get('host') + ":" + app.get('port') + "/cas/login?service=" + serviceUrl)
+      let encode = encodeURIComponent(app.get('accessUrl') + "/cas/login?service=" + serviceUrl)
       let q = getQueries(req)
       q = q.length==0?'':'&'+q
       res.redirect(config.loginPage + "?redirect=" + encode + q)

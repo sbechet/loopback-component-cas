@@ -80,7 +80,7 @@ CAS redirect on theses pages if necessary.
 
 #### login Page parameter
 
-* `redirect` [OPTIONAL] - the full URL-encoded cas login service as described in section 2.2 of RFC 3986 (ex. ${CASServerUrl}/cas/login?service=serviceUrl)
+* `redirect` [OPTIONAL] - the full URL-encoded cas login service as described in section 2.2 of RFC 3986 (ex. ${accessUrl}/cas/login?service=serviceUrl)
 
 #### logout Page parameter
 
@@ -122,6 +122,7 @@ In `server/component-config.json`
 
 ```json
 "./components/loopback-component-cas": {
+  "accessUrl": "https://my.access.Url"
   "serviceTicketTTL": 60000,
   "loginPage": "/account/signin",
   "logoutPage": "/account/signout",
