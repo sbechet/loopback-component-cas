@@ -54,7 +54,7 @@ module.exports = function (app, config, req, res, next, loginCallback, isProtoco
       for (let att of config.attributes) {
         switch (att) {
           case 'authenticationDate':
-            returnProfile.CAS3attributes.authenticationDate = moment(tgt.created).format("YYYY-MM-DDThh:mm:ss")
+            returnProfile.CAS3attributes.authenticationDate = moment(tgt.created).format("YYYY-MM-DDTHH:mm:ss")
             break
           case 'longTermAuthenticationRequestTokenUsed':
             returnProfile.CAS3attributes.longTermAuthenticationRequestTokenUsed = false  //TODO: how to know?
