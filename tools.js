@@ -18,7 +18,7 @@ module.exports.findService = function findService(app, serviceUrl, cb) {
       }
     }
     let error = new Error('Could not find service for ' + serviceUrl)
-    error.status = 500
+    error.status = 401
     return cb(error)
   })
 }
